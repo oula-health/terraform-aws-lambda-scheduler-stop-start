@@ -107,6 +107,18 @@ variable "ecs_schedule" {
   default     = false
 }
 
+variable "scheduler_schedule" {
+  description = "Enable scheduling on EventBridge Scheduler schedules"
+  type        = bool
+  default     = false
+}
+
+variable "scheduler_schedule_names" {
+  description = "List of EventBridge Scheduler schedules to manage, i.e. [\"project-app-afternoon-job-staging-us-east-1\"]"
+  type        = list(string)
+  default     = []
+}
+
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
   type        = bool

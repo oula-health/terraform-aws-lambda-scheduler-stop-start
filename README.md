@@ -16,6 +16,7 @@ If you are using Terraform 0.11 you can use versions v1.*.
 *  Aws lambda runtine Python 3.7
 *  ec2 instances scheduling
 *  ecs service scheduling
+*  EventBridge Scheduler scheduling
 *  rds clusters scheduling
 *  rds instances scheduling
 *  redshift clusters scheduling
@@ -38,6 +39,8 @@ module "stop_ec2_instance" {
   autoscaling_schedule      = "false"
   documendb_schedule        = "false"
   ec2_schedule              = "true"
+  scheduler_schedule        = "false"
+  scheduler_schedule_names  = ["project-app-afternoonjob-staging-us-east-1", "schedule2"]
   ecs_schedule              = "false"
   rds_schedule              = "false"
   redshift_schedule         = "false"
@@ -58,6 +61,8 @@ module "start_ec2_instance" {
   autoscaling_schedule      = "false"
   documendb_schedule        = "false"
   ec2_schedule              = "true"
+  scheduler_schedule        = "false"
+  scheduler_schedule_names  = ["project-app-afternoonjob-staging-us-east-1", "schedule2"]
   ecs_schedule              = "false"
   rds_schedule              = "false"
   redshift_schedule         = "false"

@@ -130,6 +130,26 @@ data "aws_iam_policy_document" "ecs_scheduler" {
   }
 }
 
+resource "aws_iam_role_policy" "scheduler_scheduler" {
+  count  = var.custom_iam_role_arn == null && var.scheduler_schedule == true ? 1 : 0
+  name   = "${var.name}-eb-scheduler-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.scheduler_scheduler.json
+}
+
+data "aws_iam_policy_document" "scheduler_scheduler" {
+  statement {
+    actions = [
+      "scheduler:GetSchedule",
+      "scheduler:UpdateSchedule",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
+
 resource "aws_iam_role_policy" "redshift_scheduler" {
   count  = var.custom_iam_role_arn == null && var.redshift_schedule == true ? 1 : 0
   name   = "${var.name}-redshift-custom-policy-scheduler"
