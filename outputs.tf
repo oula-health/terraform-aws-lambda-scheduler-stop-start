@@ -45,10 +45,10 @@ output "scheduler_log_group_arn" {
 
 output "scheduler_expression" {
   description = "The expression of the scheduler"
-  value       = aws_scheduler_schedule.this.schedule_expression
+  value       = var.schedule_expression != null && var.schedule_expression != "" ? aws_scheduler_schedule.this[0].schedule_expression : null
 }
 
 output "scheduler_timezone" {
   description = "The timezone of the scheduler"
-  value       = aws_scheduler_schedule.this.schedule_expression_timezone
+  value       = var.schedule_expression != null && var.schedule_expression != "" ? aws_scheduler_schedule.this[0].schedule_expression_timezone : null
 }

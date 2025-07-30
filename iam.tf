@@ -121,7 +121,7 @@ data "aws_iam_policy_document" "ecs_scheduler" {
   statement {
     actions = [
       "ecs:UpdateService",
-      "ecs:DescribeService",
+      "ecs:DescribeServices",
     ]
 
     resources = [

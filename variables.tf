@@ -3,7 +3,7 @@
 variable "schedule_expression" {
   description = "Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html"
   type        = string
-  default     = "cron(0 22 ? * MON-FRI *)"
+  default     = null
 }
 
 variable "schedule_expression_timezone" {

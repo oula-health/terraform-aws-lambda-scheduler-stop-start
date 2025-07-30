@@ -43,6 +43,8 @@ resource "aws_lambda_function" "this" {
 }
 
 resource "aws_scheduler_schedule" "this" {
+  count = var.schedule_expression != null && var.schedule_expression != "" ? 1 : 0
+
   name                         = "trigger-lambda-scheduler-${var.name}"
   description                  = "Trigger lambda scheduler"
   schedule_expression          = var.schedule_expression
