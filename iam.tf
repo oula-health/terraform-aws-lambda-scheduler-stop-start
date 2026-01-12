@@ -150,6 +150,24 @@ data "aws_iam_policy_document" "scheduler_scheduler" {
   }
 }
 
+resource "aws_iam_role_policy" "elasticache_scheduler" {
+  count  = var.custom_iam_role_arn == null && var.elasticache_valkey_schedule == true ? 1 : 0
+  name   = "${var.name}-elasticache_valkey_schedule-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.elasticache_valkey_schedule.json
+}
+
+data "aws_iam_policy_document" "elasticache_valkey_schedule" {
+  statement {
+    actions = [
+      "elasticache:DescribeReplicationGroups"
+    ]
+    resources = [
+      "*",
+    ]
+  }
+}
+
 resource "aws_iam_role_policy" "redshift_scheduler" {
   count  = var.custom_iam_role_arn == null && var.redshift_schedule == true ? 1 : 0
   name   = "${var.name}-redshift-custom-policy-scheduler"

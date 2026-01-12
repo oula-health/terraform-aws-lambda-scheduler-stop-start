@@ -119,6 +119,68 @@ variable "scheduler_schedule_names" {
   default     = []
 }
 
+variable "elasticache_valkey_schedule" {
+  description = "Enable scheduling of Elasticache Valkey replication groups (create/delete)"
+  type        = bool
+  default     = false
+}
+
+variable "elasticache_valkey_replication_groups_to_delete" {
+  description = "List of Elasticache Valkey replication groups do delete"
+  type        = list(string)
+  default     = []
+}
+
+variable "elasticache_valkey_replication_groups_to_create" {
+  description = "List of maps of Elasticache Valkey replication group configurations to create"
+  type = list(object({
+    # Required strings
+    ReplicationGroupId          = string
+    ReplicationGroupDescription = string
+    CacheNodeType               = string
+    Engine                      = string
+    EngineVersion               = string
+    CacheParameterGroupName     = string
+    CacheSubnetGroupName        = string
+    NetworkType                 = string
+    ClusterMode                 = string
+
+    # Optional booleans
+    AutomaticFailoverEnabled    = optional(bool)
+    MultiAZEnabled              = optional(bool)
+    TransitEncryptionEnabled    = optional(bool)
+    AtRestEncryptionEnabled     = optional(bool)
+    AutoMinorVersionUpgrade     = optional(bool)
+
+    # Optional integers
+    SnapshotRetentionLimit      = optional(number)
+    ReplicasPerNodeGroup        = optional(number)
+
+    # Optional strings
+    SnapshotWindow              = optional(string)
+    AuthToken                   = optional(string)
+
+    # Optional lists
+    SecurityGroupIds            = optional(list(string))
+
+    # Optional nested list-of-objects
+    LogDeliveryConfigurations   = optional(list(object({
+      LogType         = string
+      DestinationType = string
+      LogFormat       = optional(string)
+      DestinationDetails = object({
+        CloudWatchLogsDetails = object({
+          LogGroup = string
+        })
+      })
+    })))
+
+    # Optional tags
+    Tags = optional(map(string))
+  }))
+  default     = []
+}
+
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
   type        = bool

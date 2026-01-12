@@ -133,10 +133,9 @@ def ecs_exception(resource_name: str, resource_id: str, exception) -> None:
 
 
 def scheduler_exception(resource_name: str, resource_id: str, exception) -> None:
-    """Exception raised during execution of EventBridge Scheduler scheduler.
+    """Exception raised during execution of EventBridge Schedule scheduler.
 
-    Log instance, spot instance and autoscaling groups exceptions
-    on the specific aws resources.
+    Log EB Schedule exceptions on the specific aws resources.
 
     :param str resource_name:
         Aws resource name
@@ -145,35 +144,12 @@ def scheduler_exception(resource_name: str, resource_id: str, exception) -> None
     :param str exception:
         Human readable string describing the exception
     """
-    info_codes = ["ResourceNotFoundException"]
-    warning_codes = [
-        "ValidationException",
-        "InternalServerException",
-        "ConflictException",
-        "ThrottlingException",
-    ]
-
-    if exception.response["Error"]["Code"] in info_codes:
-        logging.info(
-            "%s %s: %s",
-            resource_name,
-            resource_id,
-            exception,
-        )
-    elif exception.response["Error"]["Code"] in warning_codes:
-        logging.warning(
-            "%s %s: %s",
-            resource_name,
-            resource_id,
-            exception,
-        )
-    else:
-        logging.error(
-            "Unexpected error on %s %s: %s",
-            resource_name,
-            resource_id,
-            exception,
-        )
+    logging.error(
+        "Unexpected error on %s %s: %s",
+        resource_name,
+        resource_id,
+        exception,
+    )
 
 
 def rds_exception(resource_name: str, resource_id: str, exception) -> None:
@@ -253,6 +229,26 @@ def redshift_exception(resource_name: str, resource_id: str, exception):
 
 
 def cloudwatch_exception(resource_name: str, resource_id: str, exception):
+    """Exception raised during execution of Cloudwatch scheduler.
+
+    Log Cloudwatch exceptions on the specific aws resources.
+
+    :param str resource_name:
+        Aws resource name
+    :param str resource_id:
+        Aws resource id
+    :param str exception:
+        Human readable string describing the exception
+    """
+    logging.error(
+        "Unexpected error on %s %s: %s",
+        resource_name,
+        resource_id,
+        exception,
+    )
+
+
+def valkey_exception(resource_name: str, resource_id: str, exception):
     """Exception raised during execution of Cloudwatch scheduler.
 
     Log Cloudwatch exceptions on the specific aws resources.
