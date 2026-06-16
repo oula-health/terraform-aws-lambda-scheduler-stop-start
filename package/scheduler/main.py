@@ -13,6 +13,7 @@ from .redshift_handler import RedshiftScheduler
 from .transfer_handler import TransferScheduler
 from .scheduler_handler import EventBridgeSchedulerScheduler
 from .valkey_cache_handler import ValkeyScheduler
+from .elb_handler import ElbScheduler
 from .utils import is_date_excluded, strtobool
 
 
@@ -42,6 +43,8 @@ def lambda_handler(event, context):
     scheduler_schedule_names = json.loads(os.environ.get("SCHEDULER_SCHEDULE_NAMES", "[]")) # EventBridge Schedules
     replication_groups_to_delete = json.loads(os.environ.get("ELASTICACHE_VALKEY_REPLICATION_GROUPS_TO_DELETE", "[]")) # Elasticache Valkey Repl Groups
     replication_groups_to_create = json.loads(os.environ.get("ELASTICACHE_VALKEY_REPLICATION_GROUPS_TO_CREATE", "[]")) # Elasticache Valkey Repl Groups 
+    elb_to_delete = json.loads(os.environ.get("ELB_TO_DELETE", "[]")) # ELBv2 Load Balancer names
+    elb_to_create = json.loads(os.environ.get("ELB_TO_CREATE", "[]")) # ELBv2 Load Balancer names
     excluded_dates = json.loads(os.environ.get("SCHEDULER_EXCLUDED_DATES", "[]"))
 
     if is_date_excluded(excluded_dates):
@@ -58,6 +61,7 @@ def lambda_handler(event, context):
         TransferScheduler: os.getenv("TRANSFER_SCHEDULE"),
         EventBridgeSchedulerScheduler: os.getenv("SCHEDULER_SCHEDULE"),
         ValkeyScheduler: os.getenv("ELASTICACHE_VALKEY_SCHEDULE"),
+        ElbScheduler: os.getenv("ELB_SCHEDULE")
     }
 
     for service, to_schedule in _strategy.items():
@@ -74,5 +78,9 @@ def lambda_handler(event, context):
                     getattr(strategy, "stop")(replication_group_names=replication_groups_to_delete)
                 elif service == ValkeyScheduler and replication_groups_to_create:
                     getattr(strategy, "start")(replication_groups=replication_groups_to_create)
+                elif service == ElbScheduler and elb_to_delete:
+                    getattr(strategy, "stop")(elb_names=elb_to_delete)
+                elif service == ElbScheduler and elb_to_create:
+                    getattr(strategy, "start")(elb_config=elb_to_create)
                 else:
                     getattr(strategy, schedule_action)(aws_tags=format_tags)

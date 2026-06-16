@@ -268,6 +268,26 @@ def valkey_exception(resource_name: str, resource_id: str, exception):
     )
 
 
+def elb_exception(resource_name: str, resource_id: str, exception):
+    """Exception raised during execution of Elb scheduler.
+
+    Log Elb exceptions on the specific aws resources.
+
+    :param str resource_name:
+        Aws resource name
+    :param str resource_id:
+        Aws resource id
+    :param str exception:
+        Human readable string describing the exception
+    """
+    logging.error(
+        "Unexpected error on %s %s: %s",
+        resource_name,
+        resource_id,
+        exception,
+    )
+
+
 def transfer_exception(resource_name: str, resource_id: str, exception):
     """Exception raised during execution of Transfer scheduler.
 

@@ -181,6 +181,83 @@ variable "elasticache_valkey_replication_groups_to_create" {
   default     = []
 }
 
+variable "elb_schedule" {
+  description = "Enable scheduling of ELBv2 Load Balancers (create/delete)"
+  type        = bool
+  default     = false
+}
+
+variable "elb_to_delete" {
+  description = "List of ELBv2 Load Balancers to delete"
+  type        = list(string)
+  default     = []
+}
+
+variable "elb_to_create" {
+  description = "List of maps of ELBv2 Load Balancers configs to create"
+  type = list(object({
+    # Required strings
+    Name          = string
+    Subnets               = list(string)
+    SecurityGroups                      = list(string)
+
+    Attributes = optional(list(map(string)))
+    OldAlarmPattern = optional(string)
+
+    Listeners         = optional(list(object({
+      Protocol = string
+      Port = string
+      SslPolicy = optional(string)
+      Certificates = optional(list(object({
+        CertificateArn = optional(string)
+        IsDefault = optional(string)
+      })))
+      DefaultActions = list(object({
+        Type = string
+        RedirectConfig = optional(object({
+          Protocol = optional(string)
+          Host = optional(string)
+          Path = optional(string)
+          Port = optional(string)
+          Query = optional(string)
+          StatusCode = optional(string)
+        }))
+        FixedResponseConfig = optional(object({
+          MessageBody = optional(string)
+          StatusCode = optional(string)
+          ContentType = optional(string)
+        }))
+      }))
+      Rules = optional(list(object({
+        Priority = string
+        Conditions = list(object({
+          Field = string
+          Values = optional(list(string))
+          SourceIpConfig = optional(object({Values = list(string)}))
+        }))
+        Actions = list(object({
+          Type = string
+          TargetGroupArn = string
+        }))
+        Tags = optional(list(map(string)))
+      })))
+      Tags = optional(list(map(string)))
+    })))
+
+    Route53Domains = optional(list(object({
+      HostedZoneId = string
+      DomainName = string
+      RecordType = string
+    })))
+
+
+    # Optional tags
+    Tags = optional(map(string))
+  }))
+  default     = []
+}
+
+
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
   type        = bool
